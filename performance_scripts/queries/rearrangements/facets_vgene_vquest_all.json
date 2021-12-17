@@ -1,0 +1,9 @@
+{
+  "filters": {
+     "op" : "=",
+     "content": {
+         "field": "v_gene",
+         "value": "IGHV1-69"}
+   },
+   "facets": "repertoire_id"
+}

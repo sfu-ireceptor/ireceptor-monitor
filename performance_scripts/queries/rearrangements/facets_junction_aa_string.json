@@ -1,0 +1,9 @@
+{
+  "filters": {
+     "op" : "contains",
+     "content": {
+         "field": "junction_aa",
+         "value": "LLTL"}
+   },
+   "facets": "repertoire_id"
+}

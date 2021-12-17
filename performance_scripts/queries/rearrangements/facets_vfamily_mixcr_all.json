@@ -1,0 +1,9 @@
+{
+  "filters": {
+     "op" : "=",
+     "content": {
+         "field": "v_subgroup",
+         "value": "TRBV20"}
+   },
+   "facets": "repertoire_id"
+}

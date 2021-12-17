@@ -1,0 +1,9 @@
+{
+  "filters": {
+     "op" : "=",
+     "content": {
+         "field": "j_call",
+         "value": "TRBJ2-7*01"}
+   },
+   "facets": "repertoire_id"
+}

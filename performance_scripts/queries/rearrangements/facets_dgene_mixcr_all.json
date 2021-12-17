@@ -1,0 +1,9 @@
+{
+  "filters": {
+     "op" : "=",
+     "content": {
+         "field": "d_gene",
+         "value": "TRBD1"}
+   },
+   "facets": "repertoire_id"
+}

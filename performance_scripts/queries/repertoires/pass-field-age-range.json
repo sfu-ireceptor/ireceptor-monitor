@@ -1,0 +1,17 @@
+{
+  "filters": {
+     "op":"and",
+     "content": [{    
+        "op":">=",
+        "content": {
+          "field":"subject.age_min",
+          "value":10
+        }},{
+        "op":"<=",
+        "content": {
+          "field":"subject.age_max",
+          "value":90
+        }}
+    ]
+  }
+}

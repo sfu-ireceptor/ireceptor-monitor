@@ -1,0 +1,30 @@
+Fri Dec 17 00:03:01 UTC 2021
+Pulling repo
+From https://github.com/sfu-ireceptor/ADC-API-Plots
+ * branch            HEAD       -> FETCH_HEAD
+Already up to date.
+Cleaning repo
+Performance test results (rearrangement)
+VDJ Server
+AIRR VDJ
+SORBONNE
+sciReptor
+NICD
+Performance test results (repertoire)
+Traceback (most recent call last):
+  File "/home/ubuntu/lfunderburk/performance-monitor/ADC-API-Performance/plot_repertoire_performance.py", line 193, in <module>
+    ireceptor_full_df = parse_df_content(ireceptor_df,s_date,e_date)
+  File "/home/ubuntu/lfunderburk/performance-monitor/ADC-API-Performance/plot_repertoire_performance.py", line 42, in parse_df_content
+    new_df = pd.concat(df)
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/pandas/core/reshape/concat.py", line 281, in concat
+    sort=sort,
+  File "/home/ubuntu/.local/lib/python3.6/site-packages/pandas/core/reshape/concat.py", line 329, in __init__
+    raise ValueError("No objects to concatenate")
+ValueError: No objects to concatenate
+[master 540c115] add plot from 2021-11-17 to 2021-12-19
+ 12 files changed, 36 insertions(+), 291 deletions(-)
+ delete mode 100644 ADC-API-Plots/repertoire/COVID19_TimeSeries_.html
+ delete mode 100644 ADC-API-Plots/repertoire/ExternalServices_TimeSeries_.html
+ delete mode 100644 ADC-API-Plots/repertoire/iReceptor_TimeSeries_.html
+To https://github.com/sfu-ireceptor/ADC-API-Plots
+   2027be7..540c115  master -> master

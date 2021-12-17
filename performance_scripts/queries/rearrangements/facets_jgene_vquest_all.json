@@ -1,0 +1,9 @@
+{
+  "filters": {
+     "op" : "=",
+     "content": {
+         "field": "j_gene",
+         "value": "IGHJ4"}
+   },
+   "facets": "repertoire_id"
+}

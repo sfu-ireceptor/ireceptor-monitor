@@ -1,0 +1,9 @@
+{
+  "filters": {
+     "op" : "=",
+     "content": {
+         "field": "v_call",
+         "value": "TRBV20-1*01"}
+   },
+   "facets": "repertoire_id"
+}

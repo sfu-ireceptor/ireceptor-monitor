@@ -1,0 +1,9 @@
+{
+  "filters": {
+     "op" : "=",
+     "content": {
+         "field": "v_call",
+         "value": "IGHV1-18*01"}
+   },
+   "facets": "repertoire_id"
+}
