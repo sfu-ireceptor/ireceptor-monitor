@@ -11,6 +11,7 @@ for queries junction_aa, junction_aa_length, v_call (a family, a gene and an all
 """
 
 import pandas as pd
+import datetime
 import matplotlib.pyplot as plt
 import os
 import sys
@@ -122,23 +123,37 @@ if __name__ == "__main__":
 
     options = getArguments()
 
-
+    # Get options
     path = options.path
     s_date = options.s_date
     e_date = options.e_date
     output_dir = options.output_dir
 
+    # Get time stamps for start and end.
+    date_format = "%Y-%m-%d"
+    print("Graphing performance from %s to %s"%(s_date, e_date))
+    datetime_object = datetime.datetime.strptime(str(s_date), date_format)
+    s_timestamp = datetime_object.timestamp()
+    datetime_object = datetime.datetime.strptime(str(e_date), date_format)
+    e_timestamp = datetime_object.timestamp()
+
+    # Get the list of files that are within the start and end date.
     files = []
-    # r=root, d=directories, f = files
-    for r, d, f in os.walk(path):
-        for file in f:
-            if '.csv' in file:
-                files.append(os.path.join(r, file))
+    for item in os.listdir(path):
+        file_path = os.path.join(path, item)
+        if os.path.isfile(file_path):
+            file_timestamp = os.path.getmtime(file_path)
+            if file_timestamp >= s_timestamp and file_timestamp <= e_timestamp:
+                files.append(file_path)
 
     all_dfs = []
     for i in range(len(files)):
-        #print(files[i])
-        df = pd.read_csv(files[i],sep=',')
+        try:
+            df = pd.read_csv(files[i],sep=',')
+        except:
+            print("Could not read file %s"%(files[i]))
+            continue
+
         # Add missing columns
         add_missing_cols(df)
         
@@ -149,13 +164,12 @@ if __name__ == "__main__":
             df["IPA#"] = files[i].split("/")[-1].split("vdjserver.org.csv")[0].split("_")[-2]
         if "vdjbase" in files[i]:
             df["IPA#"] = files[i].split("/")[-1].split("airr-seq.vdjbase.org.csv")[0].split("_")[-2]
-        if "irec" in files[i]:
-            df["IPA#"] = files[i].split("/")[-1].split("irec.i3lab.fr.csv")[0].split("_")[-2]
+        if "roche-airr" in files[i]:
+            df["IPA#"] = files[i].split("/")[-1].split("roche-airr.ireceptor.org.csv")[0].split("_")[-2]
         if "scireptor" in files[i]:
             df["IPA#"] = files[i].split("/")[-1].split("scireptor.dkfz.de.csv")[0].split("_")[-2]
-        # NICD doesn't have an IP.
-        if "154.127.124.38:2222" in files[i]:
-            df["IPA#"] = files[i].split("/")[-1].split("154.127.124.38:2222.csv")[0].split("_")[-2]
+        if "agschwab" in files[i]:
+            df["IPA#"] = files[i].split("/")[-1].split("agschwab.uni-muenster.de.csv")[0].split("_")[-2]
 
         all_dfs.append(df)
 
@@ -191,9 +205,9 @@ if __name__ == "__main__":
     all_ipa3 = all_the_data[(all_the_data["IPA#"]=="ipa3-staging") | (all_the_data["IPA#"]=="ipa3")]
     all_ipa4 = all_the_data[(all_the_data["IPA#"]=="ipa4-staging") | (all_the_data["IPA#"]=="ipa4")]
     all_ipa5 = all_the_data[(all_the_data["IPA#"]=="airr-ipa5") | (all_the_data["IPA#"]=="ipa5")]
-    gold_ipa = all_the_data[all_the_data["IPA#"]=="ipa5_airr"]
+    all_ipa6 = all_the_data[(all_the_data["IPA#"]=="airr-ipa6") | (all_the_data["IPA#"]=="ipa6")]
 
-    test = pd.concat([all_ipa1,all_ipa2,all_ipa3,all_ipa4,all_ipa5],sort=False)
+    test = pd.concat([all_ipa1,all_ipa2,all_ipa3,all_ipa4,all_ipa5,all_ipa6],sort=False)
     test['RearrangementsPerSecond']=test['NumberRearrangement']/test['TimeTaken(s)']
     test['RearrangementsPerRepertoire']=test['NumberRearrangement']/test['NumberRepertoire']
 
@@ -231,11 +245,12 @@ if __name__ == "__main__":
     airr_vdj = pd.concat([airr_vdj])
     airr_vdj['Service'] = ["VDJBase (Israel)" for i in range(len(airr_vdj['IPA#'].to_list()))]
 
-    # Sorbonne - Disabled for now, not working
-    print("SORBONNE")
-    irec_df = all_the_data[(all_the_data["IPA#"]=="irec")]
-    irec_df = pd.concat([irec_df])
-    irec_df['Service'] = ["i3 Lab (France)" for i in range(len(irec_df['IPA#'].to_list()))]
+    # Roche
+    print("Roche")
+    roche_df = all_the_data[(all_the_data["IPA#"]=="roche-airr")]
+    roche_df = pd.concat([roche_df])
+    roche_df['Service'] = ["Roche/KCL (Canada)" for i in range(len(roche_df['IPA#'].to_list()))]
+    print(roche_df)
 
     # sciReptor
     print("sciReptor")
@@ -243,15 +258,16 @@ if __name__ == "__main__":
     scireptor_df = pd.concat([scireptor_df])
     scireptor_df['Service'] = ["sciReptor (Germany)" for i in range(len(scireptor_df['IPA#'].to_list()))]
 
-    # NICD (doesn't have a DNS, uses first IP number as "service"
-    print("NICD")
-    nicd_df = all_the_data[(all_the_data["IPA#"]=="154")]
-    nicd_df = pd.concat([nicd_df])
-    nicd_df['Service'] = ["NICD (South Africa)" for i in range(len(nicd_df['IPA#'].to_list()))]
+    # University of Muenster
+    print("Muenster")
+    muenster_df = all_the_data[(all_the_data["IPA#"]=="agschwab")]
+    muenster_df = pd.concat([muenster_df])
+    muenster_df['Service'] = ["Muenster (Germany)" for i in range(len(muenster_df['IPA#'].to_list()))]
+    print(muenster_df)
 
     # Concat DFs together for plotting
     #irec__vdjb_vdjs_df = pd.concat([vdj_df,airr_vdj,irec_df, scireptor_df], ignore_index=True)
-    external_df = pd.concat([vdj_df,airr_vdj,scireptor_df, irec_df, nicd_df], ignore_index=True)
+    external_df = pd.concat([vdj_df,airr_vdj,scireptor_df,roche_df,muenster_df], ignore_index=True)
     external_df['RearrangementsPerSecond']=external_df['NumberRearrangement']/external_df['TimeTaken(s)']
     external_df['RearrangementsPerRepertoire']=external_df['NumberRearrangement']/external_df['NumberRepertoire']
 

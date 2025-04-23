@@ -1,6 +1,7 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import os
+import datetime
 import sys
 import argparse
 import numpy as np
@@ -99,63 +100,78 @@ if __name__ == "__main__":
     e_date = options.e_date
     output_dir = options.output_dir
 
+    # Get date in timestamp format.
+    date_format = "%Y-%m-%d"
+    datetime_object = datetime.datetime.strptime(str(s_date), date_format)
+    s_timestamp = datetime_object.timestamp()
+    datetime_object = datetime.datetime.strptime(str(e_date), date_format)
+    e_timestamp = datetime_object.timestamp()
+
+    # Get the files from within the date range
     files = []
-        # r=root, d=directories, f = files
-    for r, d, f in os.walk(path):
-        for file in f:
-            if '.csv' in file:
-                files.append(os.path.join(r, file))
+    for item in os.listdir(path):
+        file_path = os.path.join(path, item)
+        if os.path.isfile(file_path):
+            file_timestamp = os.path.getmtime(file_path)
+            if file_timestamp >= s_timestamp and file_timestamp <= e_timestamp:
+                files.append(file_path)
+
 
     ireceptor_df = []
     covid_df = []
     vdjserver_df = []
-    irec_df = []
+    roche_df = []
     airr_seq_df = []
     scireptor_df = []
-    nicd_df = []
+    muenster_df = []
     external_df = []
     for i in range(len(files)):
 
+      try:
+        df = pd.read_csv(files[i],sep=',', engine='python' ,encoding='utf-8', error_bad_lines=False)
+      except:
+        print("Could not read file %s"%(files[i]))
+      else:
         #print(files[i])
         if "ipa" in files[i] and "covid" not in files[i]:
-            ireceptor = pd.read_csv(files[i],sep=',', engine='python' ,encoding='utf-8', error_bad_lines=False)
-            ireceptor["IPA#"] = files[i].split("/")[-1].split(".ireceptor.org.csv")[0].split("_")[-1]
+            #ireceptor = pd.read_csv(files[i],sep=',', engine='python' ,encoding='utf-8', error_bad_lines=False)
+            df["IPA#"] = files[i].split("/")[-1].split(".ireceptor.org.csv")[0].split("_")[-1]
             # Remove odd col, remove Repertoire col, add query col
-            clean_df(ireceptor)
+            clean_df(df)
             # Save new file
-            ireceptor.to_csv(files[i])
+            df.to_csv(files[i])
             # Add to list of files
-            ireceptor_df.append(ireceptor)
+            ireceptor_df.append(df)
             #print("Ireceptor")
         if "vdjserver" in files[i]:
-            vdj = pd.read_csv(files[i],sep=',', engine='python' ,encoding='utf-8', error_bad_lines=False)
-            if "QueryName" in vdj.columns:
-                vdj["IPA#"] = files[i].split("/")[-1].split("vdjserver.org.csv")[0].split("_")[-2]
-                vdj["Service"]="VDJServer (US)"
+            #vdj = pd.read_csv(files[i],sep=',', engine='python' ,encoding='utf-8', error_bad_lines=False)
+            if "QueryName" in df.columns:
+                df["IPA#"] = files[i].split("/")[-1].split("vdjserver.org.csv")[0].split("_")[-2]
+                df["Service"]="VDJServer (US)"
                 # Remove odd col, remove Repertoire col, add query col
-                clean_df(vdj)
+                clean_df(df)
                 # Save new file
-                vdj.to_csv(files[i])
-                vdjserver_df.append(vdj)
+                df.to_csv(files[i])
+                vdjserver_df.append(df)
             else:
                 continue
         if "airr-seq" in files[i]:
-            airrseq = pd.read_csv(files[i],sep=',', engine='python' ,encoding='utf-8', error_bad_lines=False)
-            airrseq["IPA#"] = files[i].split("/")[-1].split("airr-seq.vdjbase.org.csv")[0].split("_")[-2]
-            airrseq["Service"]="VDJBase (Israel)"
+            #airrseq = pd.read_csv(files[i],sep=',', engine='python' ,encoding='utf-8', error_bad_lines=False)
+            df["IPA#"] = files[i].split("/")[-1].split("airr-seq.vdjbase.org.csv")[0].split("_")[-2]
+            df["Service"]="VDJBase (Israel)"
             # Remove odd col, remove Repertoire col, add query col
-            clean_df(airrseq)
+            clean_df(df)
             # Save new file
-            airrseq.to_csv(files[i])
-            airr_seq_df.append(airrseq)
+            df.to_csv(files[i])
+            airr_seq_df.append(df)
         if "covid" in files[i]:
-            covid =  pd.read_csv(files[i],sep=',', engine='python' ,encoding='utf-8', error_bad_lines=False)
-            covid['IPA#'] = files[i].split("/")[-1].split("ireceptor.org.csv")[0].split("_")[-2]
+            #covid =  pd.read_csv(files[i],sep=',', engine='python' ,encoding='utf-8', error_bad_lines=False)
+            df['IPA#'] = files[i].split("/")[-1].split("ireceptor.org.csv")[0].split("_")[-2]
             # Remove odd col, remove Repertoire col, add query col
-            clean_df(covid)
+            clean_df(df)
             # Save new file
-            covid.to_csv(files[i])
-            covid_df.append(covid)
+            df.to_csv(files[i])
+            covid_df.append(df)
         if "scireptor" in files[i]:
             #scireptor =  pd.read_csv(files[i],sep=',', engine='python' ,encoding='utf-8', error_bad_lines=False)
             #scireptor['IPA#'] = files[i].split("/")[-1].split("scireptor.dkfz.de.csv")[0].split("_")[-2]
@@ -164,35 +180,37 @@ if __name__ == "__main__":
             ## Save new file
             #scireptor.to_csv(files[i])
             #scireptor_df.append(scireptor)
-            scireptor = pd.read_csv(files[i],sep=',', engine='python' ,encoding='utf-8', error_bad_lines=False)
-            if "QueryName" in scireptor.columns:
-                scireptor["IPA#"] = files[i].split("/")[-1].split("scireptor.dkfz.de.csv")[0].split("_")[-2]
-                scireptor["Service"]="sciReptor (Germany)"
+
+            #scireptor = pd.read_csv(files[i],sep=',', engine='python' ,encoding='utf-8', error_bad_lines=False)
+            if "QueryName" in df.columns:
+                df["IPA#"] = files[i].split("/")[-1].split("scireptor.dkfz.de.csv")[0].split("_")[-2]
+                df["Service"]="sciReptor (Germany)"
                 # Remove odd col, remove Repertoire col, add query col
-                clean_df(scireptor)
+                clean_df(df)
                 # Save new file
-                scireptor.to_csv(files[i])
-                scireptor_df.append(scireptor)
-        elif "154.127.124.38:2222.csv" in files[i]:
-            nicd = pd.read_csv(files[i],sep=',', engine='python' ,encoding='utf-8', error_bad_lines=False)
-            if "QueryName" in nicd.columns:
-                nicd["IPA#"] = files[i].split("/")[-1].split("154.127.124.38:2222.csv")[0].split("_")[-2]
-                nicd["Service"]="NICD (South Africa)"
+                df.to_csv(files[i])
+                scireptor_df.append(df)
+        elif "muenster" in files[i]:
+            #nicd = pd.read_csv(files[i],sep=',', engine='python' ,encoding='utf-8', error_bad_lines=False)
+            if "QueryName" in df.columns:
+                df["IPA#"] = files[i].split("/")[-1].split("agschwab.uni-muenster.de.csv")[0].split("_")[-2]
+                df["Service"]="Meunster (Germany)"
                 # Remove odd col, remove Repertoire col, add query col
-                clean_df(nicd)
+                clean_df(df)
                 # Save new file
-                nicd.to_csv(files[i])
-                nicd_df.append(nicd)
-        elif "irec_irec" in files[i]:
-            irec_irec = pd.read_csv(files[i],sep=',', engine='python' ,encoding='utf-8', error_bad_lines=False)
-            if "QueryName" in irec_irec.columns:
-                irec_irec["IPA#"] = files[i].split("/")[-1].split("irec.")[0].split("_")[-2]
-                irec_irec["Service"]="i3 Lab (France)"
+                df.to_csv(files[i])
+                muenster_df.append(df)
+        elif "roche" in files[i]:
+            #irec_irec = pd.read_csv(files[i],sep=',', engine='python' ,encoding='utf-8', error_bad_lines=False)
+            if "QueryName" in df.columns:
+                df["IPA#"] = files[i].split("/")[-1].split("rochek.")[0].split("_")[-2]
+                df["IPA#"] = files[i].split("/")[-1].split("roche-airr.ireceptor.org.csv")[0].split("_")[-2]
+                df["Service"]="Roche/KCL (Canada)"
                 # Remove odd col, remove Repertoire col, add query col
-                clean_df(irec_irec)
+                clean_df(df)
                 # Save new file
-                irec_irec.to_csv(files[i])
-                irec_df.append(irec_irec)
+                df.to_csv(files[i])
+                roche_df.append(df)
             else:
                 continue
 
@@ -202,10 +220,10 @@ if __name__ == "__main__":
 
     vdjserver_full_df = parse_df_content(vdjserver_df,s_date,e_date)
     airr_full_df = parse_df_content(airr_seq_df,s_date,e_date)
-    irec_full_df = parse_df_content(irec_df,s_date,e_date)
     scireptor_full_df = parse_df_content(scireptor_df,s_date,e_date)
-    nicd_full_df = parse_df_content(nicd_df,s_date,e_date)
-    external_full_df = pd.concat([vdjserver_full_df,airr_full_df,scireptor_full_df, irec_full_df, nicd_full_df])
+    muenster_full_df = parse_df_content(muenster_df,s_date,e_date)
+    roche_full_df = parse_df_content(roche_df,s_date,e_date)
+    external_full_df = pd.concat([vdjserver_full_df,airr_full_df,scireptor_full_df, roche_full_df, muenster_full_df])
 
     # Generate plots
     external_full_df.to_csv(output_dir + "fullresults.csv",sep=",")
