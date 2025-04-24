@@ -141,12 +141,13 @@ if __name__ == "__main__":
     files = []
     for item in os.listdir(path):
         file_path = os.path.join(path, item)
-        if os.path.isfile(file_path):
+        if os.path.isfile(file_path) and ".csv" in item:
             file_timestamp = os.path.getmtime(file_path)
             if file_timestamp >= s_timestamp and file_timestamp <= e_timestamp:
                 files.append(file_path)
 
     all_dfs = []
+    count = 0
     for i in range(len(files)):
         try:
             df = pd.read_csv(files[i],sep=',')
@@ -172,8 +173,9 @@ if __name__ == "__main__":
             df["IPA#"] = files[i].split("/")[-1].split("agschwab.uni-muenster.de.csv")[0].split("_")[-2]
 
         all_dfs.append(df)
+        count = count + 1
 
-    all_the_data = pd.concat([all_dfs[i] for i in range(len(files))],sort=False)
+    all_the_data = pd.concat([all_dfs[i] for i in range(count)],sort=False)
 
     all_the_data = all_the_data.drop(['Unnamed: 0'], 1)
 
@@ -250,7 +252,6 @@ if __name__ == "__main__":
     roche_df = all_the_data[(all_the_data["IPA#"]=="roche-airr")]
     roche_df = pd.concat([roche_df])
     roche_df['Service'] = ["Roche/KCL (Canada)" for i in range(len(roche_df['IPA#'].to_list()))]
-    print(roche_df)
 
     # sciReptor
     print("sciReptor")
@@ -263,7 +264,6 @@ if __name__ == "__main__":
     muenster_df = all_the_data[(all_the_data["IPA#"]=="agschwab")]
     muenster_df = pd.concat([muenster_df])
     muenster_df['Service'] = ["Muenster (Germany)" for i in range(len(muenster_df['IPA#'].to_list()))]
-    print(muenster_df)
 
     # Concat DFs together for plotting
     #irec__vdjb_vdjs_df = pd.concat([vdj_df,airr_vdj,irec_df, scireptor_df], ignore_index=True)

@@ -111,7 +111,7 @@ if __name__ == "__main__":
     files = []
     for item in os.listdir(path):
         file_path = os.path.join(path, item)
-        if os.path.isfile(file_path):
+        if os.path.isfile(file_path) and ".csv" in item:
             file_timestamp = os.path.getmtime(file_path)
             if file_timestamp >= s_timestamp and file_timestamp <= e_timestamp:
                 files.append(file_path)
