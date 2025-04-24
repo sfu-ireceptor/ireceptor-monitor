@@ -119,6 +119,7 @@ if __name__ == "__main__":
 
     ireceptor_df = []
     covid_df = []
+    t1d_df = []
     vdjserver_df = []
     roche_df = []
     airr_seq_df = []
@@ -172,6 +173,14 @@ if __name__ == "__main__":
             # Save new file
             df.to_csv(files[i])
             covid_df.append(df)
+        if "t1d" in files[i]:
+            #covid =  pd.read_csv(files[i],sep=',', engine='python' ,encoding='utf-8', error_bad_lines=False)
+            df['IPA#'] = files[i].split("/")[-1].split("ireceptor.org.csv")[0].split("_")[-2]
+            # Remove odd col, remove Repertoire col, add query col
+            clean_df(df)
+            # Save new file
+            df.to_csv(files[i])
+            t1d_df.append(df)
         if "scireptor" in files[i]:
             #scireptor =  pd.read_csv(files[i],sep=',', engine='python' ,encoding='utf-8', error_bad_lines=False)
             #scireptor['IPA#'] = files[i].split("/")[-1].split("scireptor.dkfz.de.csv")[0].split("_")[-2]
@@ -217,6 +226,7 @@ if __name__ == "__main__":
     # Process each dataframe
     ireceptor_full_df = parse_df_content(ireceptor_df,s_date,e_date)
     covid_full_df = parse_df_content(covid_df,s_date,e_date)
+    t1d_full_df = parse_df_content(t1d_df,s_date,e_date)
 
     vdjserver_full_df = parse_df_content(vdjserver_df,s_date,e_date)
     airr_full_df = parse_df_content(airr_seq_df,s_date,e_date)
@@ -229,4 +239,5 @@ if __name__ == "__main__":
     external_full_df.to_csv(output_dir + "fullresults.csv",sep=",")
     plot_performance(ireceptor_full_df,"iReceptor",output_dir,"IPA#")
     plot_performance(covid_full_df,"COVID19",output_dir,"IPA#")
+    plot_performance(t1d_full_df,"T1D",output_dir,"IPA#")
     plot_performance(external_full_df,"ExternalServices",output_dir,"Service")

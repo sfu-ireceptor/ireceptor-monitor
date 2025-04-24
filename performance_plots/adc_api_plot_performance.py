@@ -232,6 +232,18 @@ if __name__ == "__main__":
     covid['RearrangementsPerRepertoire']=covid['NumberRearrangement']/covid['NumberRepertoire']
     plot_performance(covid,"COVID19",output_dir)
 
+    # T1D
+    t1d_1 = all_the_data[ (all_the_data["IPA#"]=="t1d-1")]
+    t1d_2 = all_the_data[ (all_the_data["IPA#"]=="t1d-2")]
+    t1d_3 = all_the_data[ (all_the_data["IPA#"]=="t1d-3")]
+    t1d = pd.concat([t1d_1,t1d_2,t1d_3],sort=False)
+
+    t1d["Service"] = ["T1D-" + str(t1d['IPA#'].to_list()[i].split('-')[1]) for i in range(len(t1d['IPA#'].to_list()))]
+
+    t1d['RearrangementsPerSecond']=t1d['NumberRearrangement']/t1d['TimeTaken(s)']
+    t1d['RearrangementsPerRepertoire']=t1d['NumberRearrangement']/t1d['NumberRepertoire']
+    plot_performance(t1d,"T1D",output_dir)
+
     # VDJ Server
     print("VDJ Server")
     vdj_df = all_the_data[(all_the_data["IPA#"]=="vdjserver")]
