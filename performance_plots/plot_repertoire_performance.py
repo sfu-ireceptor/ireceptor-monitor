@@ -133,19 +133,22 @@ if __name__ == "__main__":
       except:
         print("Could not read file %s"%(files[i]))
       else:
-        #print(files[i])
         if "ipa" in files[i] and "covid" not in files[i]:
-            #ireceptor = pd.read_csv(files[i],sep=',', engine='python' ,encoding='utf-8', error_bad_lines=False)
+            # File names are of the form:
+            # _PerformanceTesting_2025-04-29_19:03:10_Query_Times_ipa2_ipa2.ireceptor.org.csv
+            # We parse the file name to extract the repository. First, get 
+            # the file name (the last field after /), then split on the
+            # repository with csv extension and discard (leaving the repository
+            # name part. Then split on _ and grab the last or second to last 
+            # item which is the short name of the repository.
             df["IPA#"] = files[i].split("/")[-1].split(".ireceptor.org.csv")[0].split("_")[-1]
             # Remove odd col, remove Repertoire col, add query col
             clean_df(df)
             # Save new file
             df.to_csv(files[i])
-            # Add to list of files
+            # Add to list of data frames
             ireceptor_df.append(df)
-            #print("Ireceptor")
         if "vdjserver" in files[i]:
-            #vdj = pd.read_csv(files[i],sep=',', engine='python' ,encoding='utf-8', error_bad_lines=False)
             if "QueryName" in df.columns:
                 df["IPA#"] = files[i].split("/")[-1].split("vdjserver.org.csv")[0].split("_")[-2]
                 df["Service"]="VDJServer (US)"
@@ -157,7 +160,6 @@ if __name__ == "__main__":
             else:
                 continue
         if "airr-seq" in files[i]:
-            #airrseq = pd.read_csv(files[i],sep=',', engine='python' ,encoding='utf-8', error_bad_lines=False)
             df["IPA#"] = files[i].split("/")[-1].split("airr-seq.vdjbase.org.csv")[0].split("_")[-2]
             df["Service"]="VDJBase (Israel)"
             # Remove odd col, remove Repertoire col, add query col
@@ -166,7 +168,6 @@ if __name__ == "__main__":
             df.to_csv(files[i])
             airr_seq_df.append(df)
         if "covid" in files[i]:
-            #covid =  pd.read_csv(files[i],sep=',', engine='python' ,encoding='utf-8', error_bad_lines=False)
             df['IPA#'] = files[i].split("/")[-1].split("ireceptor.org.csv")[0].split("_")[-2]
             # Remove odd col, remove Repertoire col, add query col
             clean_df(df)
@@ -174,7 +175,6 @@ if __name__ == "__main__":
             df.to_csv(files[i])
             covid_df.append(df)
         if "t1d" in files[i]:
-            #covid =  pd.read_csv(files[i],sep=',', engine='python' ,encoding='utf-8', error_bad_lines=False)
             df['IPA#'] = files[i].split("/")[-1].split("ireceptor.org.csv")[0].split("_")[-2]
             # Remove odd col, remove Repertoire col, add query col
             clean_df(df)
@@ -182,15 +182,6 @@ if __name__ == "__main__":
             df.to_csv(files[i])
             t1d_df.append(df)
         if "scireptor" in files[i]:
-            #scireptor =  pd.read_csv(files[i],sep=',', engine='python' ,encoding='utf-8', error_bad_lines=False)
-            #scireptor['IPA#'] = files[i].split("/")[-1].split("scireptor.dkfz.de.csv")[0].split("_")[-2]
-            ## Remove odd col, remove Repertoire col, add query col
-            #clean_df(scireptor)
-            ## Save new file
-            #scireptor.to_csv(files[i])
-            #scireptor_df.append(scireptor)
-
-            #scireptor = pd.read_csv(files[i],sep=',', engine='python' ,encoding='utf-8', error_bad_lines=False)
             if "QueryName" in df.columns:
                 df["IPA#"] = files[i].split("/")[-1].split("scireptor.dkfz.de.csv")[0].split("_")[-2]
                 df["Service"]="sciReptor (Germany)"
@@ -200,7 +191,6 @@ if __name__ == "__main__":
                 df.to_csv(files[i])
                 scireptor_df.append(df)
         elif "muenster" in files[i]:
-            #nicd = pd.read_csv(files[i],sep=',', engine='python' ,encoding='utf-8', error_bad_lines=False)
             if "QueryName" in df.columns:
                 df["IPA#"] = files[i].split("/")[-1].split("agschwab.uni-muenster.de.csv")[0].split("_")[-2]
                 df["Service"]="Meunster (Germany)"
@@ -210,9 +200,7 @@ if __name__ == "__main__":
                 df.to_csv(files[i])
                 muenster_df.append(df)
         elif "roche" in files[i]:
-            #irec_irec = pd.read_csv(files[i],sep=',', engine='python' ,encoding='utf-8', error_bad_lines=False)
             if "QueryName" in df.columns:
-                df["IPA#"] = files[i].split("/")[-1].split("rochek.")[0].split("_")[-2]
                 df["IPA#"] = files[i].split("/")[-1].split("roche-airr.ireceptor.org.csv")[0].split("_")[-2]
                 df["Service"]="Roche/KCL (Canada)"
                 # Remove odd col, remove Repertoire col, add query col
