@@ -233,7 +233,8 @@ if __name__ == "__main__":
     scireptor_full_df = parse_df_content(scireptor_df,s_date,e_date)
     muenster_full_df = parse_df_content(muenster_df,s_date,e_date)
     roche_full_df = parse_df_content(roche_df,s_date,e_date)
-    external_full_df = pd.concat([vdjserver_full_df,airr_full_df,scireptor_full_df, roche_full_df, muenster_full_df])
+    #external_full_df = pd.concat([vdjserver_full_df,airr_full_df,scireptor_full_df, roche_full_df, muenster_full_df])
+    external_full_df = pd.concat([airr_full_df,scireptor_full_df, roche_full_df, muenster_full_df])
 
     # Generate plots
     external_full_df.to_csv(output_dir + "fullresults.csv",sep=",")

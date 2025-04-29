@@ -245,12 +245,12 @@ if __name__ == "__main__":
     plot_performance(t1d,"T1D",output_dir)
 
     # VDJ Server
-    print("VDJ Server")
-    vdj_df = all_the_data[(all_the_data["IPA#"]=="vdjserver")]
-    vdj_df = pd.concat([vdj_df])
-    vdj_df['Service'] = ["VDJServer (US)" for i in range(len(vdj_df['IPA#'].to_list()))]
-    vdj_df['RearrangementsPerSecond']=vdj_df['NumberRearrangement']/vdj_df['TimeTaken(s)']
-    vdj_df['RearrangementsPerRepertoire']=vdj_df['NumberRearrangement']/vdj_df['NumberRepertoire']
+    #print("VDJ Server")
+    #vdj_df = all_the_data[(all_the_data["IPA#"]=="vdjserver")]
+    #vdj_df = pd.concat([vdj_df])
+    #vdj_df['Service'] = ["VDJServer (US)" for i in range(len(vdj_df['IPA#'].to_list()))]
+    #vdj_df['RearrangementsPerSecond']=vdj_df['NumberRearrangement']/vdj_df['TimeTaken(s)']
+    #vdj_df['RearrangementsPerRepertoire']=vdj_df['NumberRearrangement']/vdj_df['NumberRepertoire']
     
 
     # AIRR VDJ Turnkey
@@ -278,8 +278,8 @@ if __name__ == "__main__":
     muenster_df['Service'] = ["Muenster (Germany)" for i in range(len(muenster_df['IPA#'].to_list()))]
 
     # Concat DFs together for plotting
-    #irec__vdjb_vdjs_df = pd.concat([vdj_df,airr_vdj,irec_df, scireptor_df], ignore_index=True)
-    external_df = pd.concat([vdj_df,airr_vdj,scireptor_df,roche_df,muenster_df], ignore_index=True)
+    # external_df = pd.concat([vdj_df,airr_vdj,scireptor_df,roche_df,muenster_df], ignore_index=True)
+    external_df = pd.concat([airr_vdj,scireptor_df,roche_df,muenster_df], ignore_index=True)
     external_df['RearrangementsPerSecond']=external_df['NumberRearrangement']/external_df['TimeTaken(s)']
     external_df['RearrangementsPerRepertoire']=external_df['NumberRearrangement']/external_df['NumberRepertoire']
 
